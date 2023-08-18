@@ -193,7 +193,7 @@ public class HiveTestUtil {
       hiveTestService.stop();
     }
     if (zkServer != null) {
-      zkServer.shutdown(true);
+      zkServer.shutdown();
     }
     if (fileSystem != null) {
       fileSystem.close();
