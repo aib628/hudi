@@ -136,6 +136,7 @@
                   <include>org.apache.flink:flink-json</include>
                   <include>org.apache.flink:${flink.parquet.artifactId}</include>
                   <include>org.apache.flink:flink-metrics-dropwizard</include>
+                  <include>org.apache.flink:flink-shaded-guava</include>
 
                   <include>org.apache.hive:hive-common</include>
                   <include>org.apache.hive:hive-service</include>
@@ -212,6 +213,10 @@
                 <relocation>
                   <pattern>org.openjdk.jol.</pattern>
                   <shadedPattern>org.apache.hudi.org.openjdk.jol.</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.google.common.</pattern>
+                  <shadedPattern>${flink.bundle.shade.prefix}com.google.common.</shadedPattern>
                 </relocation>
               </relocations>
               <filters>
