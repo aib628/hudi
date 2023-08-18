@@ -16,9 +16,9 @@
 #  See the License for the specific language governing permissions and
 # limitations under the License.
 
-. "/spark/sbin/spark-config.sh"
+. "/opt/spark/sbin/spark-config.sh"
 
-. "/spark/bin/load-spark-env.sh"
+. "/opt/spark/bin/load-spark-env.sh"
 
 mkdir -p $SPARK_WORKER_LOG
 
