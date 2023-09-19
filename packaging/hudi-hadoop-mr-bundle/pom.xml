@@ -146,6 +146,8 @@
                     <exclude>META-INF/services/javax.*</exclude>
                     <exclude>**/*.proto</exclude>
                     <exclude>hbase-webapps/**</exclude>
+                    <exclude>**/hbase-site.xml</exclude>
+                    <exclude>**/hbase-default.xml</exclude>
                   </excludes>
                 </filter>
               </filters>
