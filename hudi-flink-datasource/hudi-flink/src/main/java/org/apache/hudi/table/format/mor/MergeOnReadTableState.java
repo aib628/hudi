@@ -18,14 +18,16 @@
 
 package org.apache.hudi.table.format.mor;
 
-import org.apache.hudi.common.model.HoodieRecord;
-
-import org.apache.flink.table.types.logical.LogicalType;
-import org.apache.flink.table.types.logical.RowType;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.flink.table.types.logical.LogicalType;
+import org.apache.flink.table.types.logical.RowType;
+import org.apache.hudi.common.model.HoodieRecord;
+import org.apache.hudi.exception.HoodieException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Statistics for merge on read table source.
@@ -33,6 +35,7 @@ import java.util.List;
 public class MergeOnReadTableState implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LoggerFactory.getLogger(MergeOnReadTableState.class);
 
   private final RowType rowType;
   private final RowType requiredRowType;
@@ -56,6 +59,8 @@ public class MergeOnReadTableState implements Serializable {
     this.inputSplits = inputSplits;
     this.pkFields = pkFields;
     this.operationPos = rowType.getFieldIndex(HoodieRecord.OPERATION_METADATA_FIELD);
+
+    checkRequiredFieldValidation();
   }
 
   public RowType getRowType() {
@@ -113,5 +118,15 @@ public class MergeOnReadTableState implements Serializable {
         .map(RowType.RowField::getType).toArray(LogicalType[]::new);
     return Arrays.stream(pkOffsets).mapToObj(offset -> requiredTypes[offset])
         .toArray(LogicalType[]::new);
+  }
+
+  private void checkRequiredFieldValidation() {
+    final List<String> fieldNames = rowType.getFieldNames();
+    List<String> invalidFieldNames = requiredRowType.getFieldNames().stream().filter(requiredFieldName -> !fieldNames.contains(requiredFieldName)).collect(Collectors.toList());
+
+    if (!invalidFieldNames.isEmpty()) {
+      LOG.warn("Unknown required fields: {}, all known are: {}", String.join(",", invalidFieldNames), String.join(",", fieldNames));
+      throw new HoodieException("Unknown required fields: " + String.join(",", invalidFieldNames));
+    }
   }
 }
